@@ -26,11 +26,6 @@ namespace Automatic9045.AtsEx.Mirror
             Structures = structures;
         }
 
-        private void Register(string structureKey, TargetInfo textureInfo)
-        {
-            Registered.Add(Models[structureKey.ToLowerInvariant()], textureInfo);
-        }
-
         public void Register(string structureKey, string textureFileNameEnding, Size textureSize, float zoom)
         {
             Model model = Models[structureKey.ToLowerInvariant()];
