@@ -32,7 +32,23 @@ namespace Automatic9045.AtsEx.Mirror
         }
 
         public void Register(string structureKey, string textureFileNameEnding, Size textureSize, float zoom)
-            => Register(structureKey, new TargetInfo(Models[structureKey], textureFileNameEnding, textureSize, zoom));
+        {
+            Model model = Models[structureKey.ToLowerInvariant()];
+
+            ExtendedMaterial[] extendedMaterials = model.Mesh.GetMaterials();
+            List<MaterialInfo> materials = new List<MaterialInfo>();
+            for (int i = 0; i < extendedMaterials.Length; i++)
+            {
+                string textureFileName = extendedMaterials[i].TextureFileName;
+                if (textureFileName.EndsWith(textureFileNameEnding, StringComparison.OrdinalIgnoreCase))
+                {
+                    materials.Add(model.Materials[i]);
+                }
+            }
+
+            TargetInfo targetInfo = new TargetInfo(materials, textureSize, zoom);
+            Registered.Add(model, targetInfo);
+        }
 
         public IEnumerable<RenderTarget> Create()
         {
@@ -41,19 +57,7 @@ namespace Automatic9045.AtsEx.Mirror
                 if (structure is null) continue;
                 if (!Registered.TryGetValue(structure.Model, out TargetInfo target)) continue;
 
-                ExtendedMaterial[] extendedMaterials = target.Model.Mesh.GetMaterials();
-                List<MaterialInfo> materials = new List<MaterialInfo>();
-                for (int i = 0; i < extendedMaterials.Length; i++)
-                {
-                    string textureFileName = extendedMaterials[i].TextureFileName;
-                    if (textureFileName.EndsWith(target.TextureFileNameEnding, StringComparison.OrdinalIgnoreCase))
-                    {
-                        materials.Add(target.Model.Materials[i]);
-                    }
-                }
-
-                RenderTarget renderTarget = new RenderTarget(Direct3DProvider.Instance.Device, Renderer,
-                    structure, materials, target.TextureSize, target.Zoom);
+                RenderTarget renderTarget = new RenderTarget(Direct3DProvider.Instance.Device, Renderer, structure, target.Materials, target.TextureSize, target.Zoom);
                 yield return renderTarget;
             }
         }
@@ -61,15 +65,13 @@ namespace Automatic9045.AtsEx.Mirror
 
         private class TargetInfo
         {
-            public Model Model { get; }
-            public string TextureFileNameEnding { get; }
+            public IEnumerable<MaterialInfo> Materials { get; }
             public Size TextureSize { get; }
             public float Zoom { get; }
 
-            public TargetInfo(Model model, string fileNameEnding, Size size, float zoom)
+            public TargetInfo(IEnumerable<MaterialInfo> materials, Size size, float zoom)
             {
-                Model = model;
-                TextureFileNameEnding = fileNameEnding;
+                Materials = materials;
                 TextureSize = size;
                 Zoom = zoom;
             }
