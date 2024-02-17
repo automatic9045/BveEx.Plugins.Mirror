@@ -28,7 +28,10 @@ namespace Automatic9045.AtsEx.Mirror
 
         public void Register(string structureKey, string textureFileNameEnding, Size textureSize, float zoom)
         {
-            Model model = Models[structureKey.ToLowerInvariant()];
+            if (!Models.TryGetValue(structureKey.ToLowerInvariant(), out Model model))
+            {
+                throw new KeyNotFoundException();
+            }
 
             ExtendedMaterial[] extendedMaterials = model.Mesh.GetMaterials();
             List<MaterialInfo> materials = new List<MaterialInfo>();

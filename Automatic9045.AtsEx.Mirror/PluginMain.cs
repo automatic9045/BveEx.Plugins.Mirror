@@ -23,6 +23,7 @@ namespace Automatic9045.AtsEx.Mirror
     [PluginType(PluginType.MapPlugin)]
     internal class PluginMain : AssemblyPluginBase
     {
+        private const string ConfigFileName = "Mirror.Config.xml";
         private const double BackDrawDistance = 25;
         private const double FrontDrawDistance = 400;
 
@@ -49,10 +50,23 @@ namespace Automatic9045.AtsEx.Mirror
             FastMethod onDeviceLostMethod = assistantDrawerMembers.GetSourceMethodOf(nameof(AssistantDrawer.OnDeviceLost));
             OnDeviceLostPatch = HarmonyPatch.Patch(null, onDeviceLostMethod.Source, PatchType.Prefix);
 
-            BveHacker.ScenarioCreated += OnScenarioCreated;
-
-            string path = Path.Combine(BaseDirectory, "Mirror.Config.xml");
+            string path = Path.Combine(BaseDirectory, ConfigFileName);
             Config = Data.Config.Deserialize(path, true);
+
+            for (int i = 0; i < Config.MirrorStructures.Length; i++)
+            {
+                Data.MirrorStructure structure = Config.MirrorStructures[i];
+                if (structure.Key is null)
+                {
+                    throw new BveFileLoadException($"{i + 1} 個目のストラクチャーのキーが指定されていません。", ConfigFileName);
+                }
+                else if (structure.TextureFileName is null)
+                {
+                    throw new BveFileLoadException($"{i + 1} 個目のストラクチャーのテクスチャファイル名が指定されていません。", ConfigFileName);
+                }
+            }
+
+            BveHacker.ScenarioCreated += OnScenarioCreated;
 
             DrawPatch.Invoked += (sender, e) =>
             {
@@ -122,7 +136,14 @@ namespace Automatic9045.AtsEx.Mirror
             foreach (Data.MirrorStructure structure in Config.MirrorStructures)
             {
                 Size textureSize = new Size(structure.TextureWidth, structure.TextureHeight);
-                factory.Register(structure.Key, structure.TextureFileName, textureSize, structure.Zoom);
+                try
+                {
+                    factory.Register(structure.Key, structure.TextureFileName, textureSize, structure.Zoom);
+                }
+                catch (KeyNotFoundException)
+                {
+                    throw new BveFileLoadException($"キー '{structure.Key}' のストラクチャーが見つかりませんでした。", ConfigFileName);
+                }
             }
 
             IEnumerable<RenderTarget> renderTargets = factory.Create();
