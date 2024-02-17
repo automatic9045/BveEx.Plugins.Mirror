@@ -104,7 +104,6 @@ namespace Automatic9045.AtsEx.Mirror
                 Matrix lookAt = Matrix.LookAtLH(objectPosition, cameraPositionReflection, objectUp);
 
                 Device.SetTransform(TransformState.View, Renderer.CameraToBlock * lookAt);
-                Device.SetSamplerState(0, SamplerState.MaxAnisotropy, 0);
                 Renderer.Render(TextureSize, Zoom);
             }
         }
