@@ -53,6 +53,7 @@ namespace Automatic9045.AtsEx.Mirror
             foreach (Structure structure in Structures)
             {
                 if (structure is null) continue;
+                if (structure.Model is null) continue;
                 if (!Registered.TryGetValue(structure.Model, out TargetInfo target)) continue;
 
                 RenderTarget renderTarget = new RenderTarget(Direct3DProvider.Instance.Device, Renderer, structure, target.Materials, target.TextureSize, target.Zoom);
