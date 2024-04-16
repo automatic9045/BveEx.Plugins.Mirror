@@ -26,7 +26,7 @@ namespace Automatic9045.AtsEx.Mirror
             Structures = structures;
         }
 
-        public void Register(string structureKey, string textureFileNameEnding, Size textureSize, float zoom)
+        public void Register(string structureKey, string textureFileNameEnding, Size textureSize, float zoom, float backDrawDistance, float frontDrawDistance, double maxFps)
         {
             if (!Models.TryGetValue(structureKey.ToLowerInvariant(), out Model model))
             {
@@ -44,7 +44,7 @@ namespace Automatic9045.AtsEx.Mirror
                 }
             }
 
-            TargetInfo targetInfo = new TargetInfo(materials, textureSize, zoom);
+            TargetInfo targetInfo = new TargetInfo(materials, textureSize, zoom, backDrawDistance, frontDrawDistance, maxFps);
             Registered.Add(model, targetInfo);
         }
 
@@ -56,7 +56,8 @@ namespace Automatic9045.AtsEx.Mirror
                 if (structure.Model is null) continue;
                 if (!Registered.TryGetValue(structure.Model, out TargetInfo target)) continue;
 
-                RenderTarget renderTarget = new RenderTarget(Direct3DProvider.Instance.Device, Renderer, structure, target.Materials, target.TextureSize, target.Zoom);
+                RenderTarget renderTarget = new RenderTarget(Direct3DProvider.Instance.Device, Renderer, structure, target.Materials, target.TextureSize,
+                    target.Zoom, target.BackDrawDistance, target.FrontDrawDistance, target.MaxFps);
                 yield return renderTarget;
             }
         }
@@ -67,12 +68,18 @@ namespace Automatic9045.AtsEx.Mirror
             public IEnumerable<MaterialInfo> Materials { get; }
             public Size TextureSize { get; }
             public float Zoom { get; }
+            public float BackDrawDistance { get; }
+            public float FrontDrawDistance { get; }
+            public double MaxFps { get; }
 
-            public TargetInfo(IEnumerable<MaterialInfo> materials, Size size, float zoom)
+            public TargetInfo(IEnumerable<MaterialInfo> materials, Size size, float zoom, float backDrawDistance, float frontDrawDistance, double maxFps)
             {
                 Materials = materials;
                 TextureSize = size;
                 Zoom = zoom;
+                BackDrawDistance = backDrawDistance;
+                FrontDrawDistance = frontDrawDistance;
+                MaxFps = maxFps;
             }
         }
     }

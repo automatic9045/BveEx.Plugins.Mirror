@@ -24,5 +24,14 @@ namespace Automatic9045.AtsEx.Mirror.Data
 
         [XmlAttribute]
         public float Zoom = 1;
+
+        [XmlAttribute]
+        public float BackDrawDistance = 400;
+
+        [XmlAttribute]
+        public float FrontDrawDistance = 25;
+
+        [XmlAttribute]
+        public double MaxFps = float.PositiveInfinity;
     }
 }

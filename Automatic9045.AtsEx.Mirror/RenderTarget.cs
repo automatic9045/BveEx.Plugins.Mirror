@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -14,24 +15,30 @@ namespace Automatic9045.AtsEx.Mirror
 {
     internal class RenderTarget : IDisposable
     {
+        private readonly Stopwatch Stopwatch = Stopwatch.StartNew();
+
         private readonly Device Device;
         private readonly Renderer Renderer;
 
         private readonly LocatableMapObject MapObject;
         private readonly IEnumerable<MaterialInfo> TargetMaterials;
         private readonly Size TextureSize;
+
         private readonly float Zoom;
+        private readonly float BackDrawDistance;
+        private readonly float FrontDrawDistance;
+        private readonly double MaxFps;
 
         private Texture Texture = null;
         private Surface Stencil = null;
         private Surface TextureSurface = null;
 
-        public double MinDrawLocation { get; set; } = double.NegativeInfinity;
-        public double MaxDrawLocation { get; set; } = double.PositiveInfinity;
+        public double Location { get; set; } = 0;
 
         public bool IsEnabled { get; set; } = true;
 
-        public RenderTarget(Device device, Renderer renderer, LocatableMapObject mapObject, IEnumerable<MaterialInfo> targetMaterials, Size textureSize, float zoom)
+        public RenderTarget(Device device, Renderer renderer, LocatableMapObject mapObject, IEnumerable<MaterialInfo> targetMaterials, Size textureSize,
+            float zoom, float backDrawDistance, float frontDrawDistance, double maxFps)
         {
             Device = device;
             Renderer = renderer;
@@ -39,7 +46,11 @@ namespace Automatic9045.AtsEx.Mirror
             MapObject = mapObject;
             TargetMaterials = targetMaterials;
             TextureSize = textureSize;
+
             Zoom = zoom;
+            BackDrawDistance = backDrawDistance;
+            FrontDrawDistance = frontDrawDistance;
+            MaxFps = maxFps;
         }
 
         public void Dispose()
@@ -82,12 +93,15 @@ namespace Automatic9045.AtsEx.Mirror
                 TextureSurface = Texture.GetSurfaceLevel(0);
             }
 
+            if (Stopwatch.Elapsed.TotalSeconds < 1 / MaxFps) return;
+            Stopwatch.Restart();
+
             Device.SetRenderTarget(0, TextureSurface);
             Device.Clear(ClearFlags.Target, Color.Black, 1, 0);
 
             if (!IsEnabled) return;
-            if (MapObject.Location < MinDrawLocation) return;
-            if (MaxDrawLocation < MapObject.Location) return;
+            if (MapObject.Location < Location - BackDrawDistance) return;
+            if (Location + FrontDrawDistance < MapObject.Location) return;
 
             {
                 Matrix blockToObject = Renderer.GetTrackMatrixFromCurrentBlockOrigin(MapObject);

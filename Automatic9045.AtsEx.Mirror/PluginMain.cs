@@ -24,8 +24,6 @@ namespace Automatic9045.AtsEx.Mirror
     internal class PluginMain : AssemblyPluginBase
     {
         private const string ConfigFileName = "Mirror.Config.xml";
-        private const double BackDrawDistance = 25;
-        private const double FrontDrawDistance = 400;
 
         private static readonly string AssemblyLocation = Assembly.GetExecutingAssembly().Location;
         private static readonly string BaseDirectory = Path.GetDirectoryName(AssemblyLocation);
@@ -84,14 +82,9 @@ namespace Automatic9045.AtsEx.Mirror
                 Renderer.Tick();
 
                 double location = BveHacker.Scenario.LocationManager.Location;
-                double minDrawLocation = location - BackDrawDistance;
-                double maxDrawLocation = location + FrontDrawDistance;
-
                 foreach (RenderTarget renderTarget in RenderTargets)
                 {
-                    renderTarget.MinDrawLocation = minDrawLocation;
-                    renderTarget.MaxDrawLocation = maxDrawLocation;
-
+                    renderTarget.Location = location;
                     renderTarget.Render();
                 }
 
@@ -138,7 +131,7 @@ namespace Automatic9045.AtsEx.Mirror
                 Size textureSize = new Size(structure.TextureWidth, structure.TextureHeight);
                 try
                 {
-                    factory.Register(structure.Key, structure.TextureFileName, textureSize, structure.Zoom);
+                    factory.Register(structure.Key, structure.TextureFileName, textureSize, structure.Zoom, structure.BackDrawDistance, structure.FrontDrawDistance, structure.MaxFps);
                 }
                 catch (KeyNotFoundException)
                 {
