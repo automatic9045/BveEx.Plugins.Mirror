@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Automatic9045.AtsEx.Mirror", "Automatic9045.AtsEx.Mirror\Automatic9045.AtsEx.Mirror.csproj", "{6B4B03CF-278A-45EF-9581-C88D86DF424B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Automatic9045.BveEx.Mirror", "Automatic9045.BveEx.Mirror\Automatic9045.BveEx.Mirror.csproj", "{6B4B03CF-278A-45EF-9581-C88D86DF424B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

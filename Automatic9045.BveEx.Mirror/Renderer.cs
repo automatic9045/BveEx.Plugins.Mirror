@@ -10,7 +10,7 @@ using SlimDX.Direct3D9;
 
 using BveTypes.ClassWrappers;
 
-namespace Automatic9045.AtsEx.Mirror
+namespace Automatic9045.BveEx.Mirror
 {
     internal class Renderer
     {
@@ -29,7 +29,7 @@ namespace Automatic9045.AtsEx.Mirror
 
         public void Tick()
         {
-            CurrentBlockOriginLocation = Scenario.LocationManager.BlockIndex * 25;
+            CurrentBlockOriginLocation = Scenario.VehicleLocation.BlockIndex * 25;
 
             BlockToCamera = Scenario.Vehicle.CameraLocation.TransformFromBlock;
             CameraToBlock = Matrix.Invert(BlockToCamera);
@@ -38,7 +38,7 @@ namespace Automatic9045.AtsEx.Mirror
         }
 
         public Matrix GetTrackMatrixFromCurrentBlockOrigin(LocatableMapObject mapObject)
-            => Scenario.Route.GetTrackMatrix(mapObject, mapObject.Location, CurrentBlockOriginLocation);
+            => Scenario.Map.GetTrackMatrix(mapObject, mapObject.Location, CurrentBlockOriginLocation);
 
         public void Render(Size renderSize, float zoom)
         {

@@ -11,7 +11,7 @@ using SlimDX.Direct3D9;
 
 using BveTypes.ClassWrappers;
 
-namespace Automatic9045.AtsEx.Mirror
+namespace Automatic9045.BveEx.Mirror
 {
     internal class RenderTarget : IDisposable
     {

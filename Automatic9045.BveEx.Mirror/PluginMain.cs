@@ -15,12 +15,12 @@ using FastMember;
 using ObjectiveHarmonyPatch;
 using TypeWrapping;
 
-using AtsEx.PluginHost;
-using AtsEx.PluginHost.Plugins;
+using BveEx.PluginHost;
+using BveEx.PluginHost.Plugins;
 
-namespace Automatic9045.AtsEx.Mirror
+namespace Automatic9045.BveEx.Mirror
 {
-    [PluginType(PluginType.MapPlugin)]
+    [Plugin(PluginType.MapPlugin)]
     internal class PluginMain : AssemblyPluginBase
     {
         private const string ConfigFileName = "Mirror.Config.xml";
@@ -44,8 +44,8 @@ namespace Automatic9045.AtsEx.Mirror
             FastMethod drawMethod = mainFormMembers.GetSourceMethodOf(nameof(Scenario.Draw));
             DrawPatch = HarmonyPatch.Patch(null, drawMethod.Source, PatchType.Prefix);
 
-            ClassMemberSet assistantDrawerMembers = BveHacker.BveTypes.GetClassInfoOf<AssistantDrawer>();
-            FastMethod onDeviceLostMethod = assistantDrawerMembers.GetSourceMethodOf(nameof(AssistantDrawer.OnDeviceLost));
+            ClassMemberSet assistantDrawerMembers = BveHacker.BveTypes.GetClassInfoOf<AssistantSet>();
+            FastMethod onDeviceLostMethod = assistantDrawerMembers.GetSourceMethodOf(nameof(AssistantSet.OnDeviceLost));
             OnDeviceLostPatch = HarmonyPatch.Patch(null, onDeviceLostMethod.Source, PatchType.Prefix);
 
             string path = Path.Combine(BaseDirectory, ConfigFileName);
@@ -81,7 +81,7 @@ namespace Automatic9045.AtsEx.Mirror
                 RectangleF originalPlane = BveHacker.Scenario.Vehicle.CameraLocation.Plane;
                 Renderer.Tick();
 
-                double location = BveHacker.Scenario.LocationManager.Location;
+                double location = BveHacker.Scenario.VehicleLocation.Location;
                 foreach (RenderTarget renderTarget in RenderTargets)
                 {
                     renderTarget.Location = location;
@@ -123,8 +123,8 @@ namespace Automatic9045.AtsEx.Mirror
 
         private void OnScenarioCreated(ScenarioCreatedEventArgs e)
         {
-            Route route = e.Scenario.Route;
-            RenderTargetFactory factory = new RenderTargetFactory(Renderer, route.StructureModels, route.Structures.Put);
+            Map map = e.Scenario.Map;
+            RenderTargetFactory factory = new RenderTargetFactory(Renderer, map.StructureModels, map.Structures.Put);
 
             foreach (Data.MirrorStructure structure in Config.MirrorStructures)
             {
@@ -143,9 +143,8 @@ namespace Automatic9045.AtsEx.Mirror
             RenderTargets.AddRange(renderTargets);
         }
 
-        public override TickResult Tick(TimeSpan elapsed)
+        public override void Tick(TimeSpan elapsed)
         {
-            return new MapPluginTickResult();
         }
     }
 }

@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 
-namespace Automatic9045.AtsEx.Mirror.Data
+namespace Automatic9045.BveEx.Mirror.Data
 {
     [XmlRoot]
     public class MirrorStructure

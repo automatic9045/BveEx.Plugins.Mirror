@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 using SlimDX;
 
-namespace Automatic9045.AtsEx.Mirror
+namespace Automatic9045.BveEx.Mirror
 {
     internal static class MatrixExtensions
     {
