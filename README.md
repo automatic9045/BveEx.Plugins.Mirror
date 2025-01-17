@@ -1,7 +1,7 @@
 # BveEx.Plugins.Mirror
 【BVE/BveEX】マップ上に、実際の景色が映るミラーを設置するプラグインです。
 
-詳しくは [BveEX 公式ホームページ](https://automatic9045.github.io/AtsEX.Docs.Plugins/mirror/) をご覧ください。
+詳しくは [BveEX 公式ホームページ](https://www.okaoka-depot.com/AtsEX.Docs/plugins/mirror/) をご覧ください。
 
 ## ライセンス
 
